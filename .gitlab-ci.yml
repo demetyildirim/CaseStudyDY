@@ -1,0 +1,30 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  IMAGE_TAG: $CI_COMMIT_REF_NAME
+
+
+services:
+  - docker:20.10.7-dind
+
+
+build:
+  stage: build
+  script:
+    - docker info  
+    - docker build -t demetyildiirim/my-node-mysql-app:$IMAGE_TAG .  
+    - docker push demetyildiirim/my-node-mysql-app:$IMAGE_TAG  
+  only:
+    - master
+    - staging
+
+
+deploy:
+  stage: deploy
+  script:
+
+    - echo $KUBE_CONFIG | base64 -d > ~/.kube/config  
+  only:
+    - master
